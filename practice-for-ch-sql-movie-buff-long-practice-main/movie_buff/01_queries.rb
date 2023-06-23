@@ -1,6 +1,6 @@
 def it_was_ok
   # Consider the following:
-  #
+  Movie.select(:id, :score, :title).where(score: 2..3)
   # Movie.where(yr: 1970..1979)
   #
   # You can use ranges (a..b) inside a where method.
@@ -11,7 +11,10 @@ end
 
 def harrison_ford
   # Consider the following:
-  #
+  Movie.select(:id, :title)
+      .joins(:actors)
+      .where("actors.name = 'Harrison Ford' ")
+      .where.not("castings.ord = 1")
   # Actor
   #   .joins(:movies)
   #   .where(movies: { title: 'Blade Runner' })
@@ -25,7 +28,11 @@ end
 
 def biggest_cast
   # Consider the following:
-  #
+  Movie.select(:id, :title)
+    .joins(:castings)
+    .group('movies.id')
+    .order('COUNT(castings.actor_id) DESC')
+    .limit(3)
   # Actor
   #   .joins(:movies)
   #   .group('actors.id')
@@ -42,7 +49,9 @@ end
 
 def directed_by_one_of(them)
   # Consider the following:
-  #
+  Movie.select(:id, :title)
+    .joins(:director)
+    .where('actors.name IN (?)', them)
   # Movie.where('yr IN (?)', years)
   #
   # You can use IN to test if an element is present in an array.
@@ -59,7 +68,7 @@ end
 
 def movie_names_before_1940
   # Consider the following:
-  #
+  Movie.where('yr < (?)', 1940).pluck(:title)
   # Movie.where('score < 2.0').pluck(:title)
   # => ['Police Academy: Mission to Moscow']
   #
